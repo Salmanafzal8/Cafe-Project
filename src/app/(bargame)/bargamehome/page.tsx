@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getAllBarGames, BarGame } from "../../lib/api";
+import { getAllBarGames, BarGame } from "@/lib/gameApi";
 import { useRouter } from "next/navigation";
+import { Routes } from "@/lib/routes";
+import GameCard from "@/components/GameCard";
 
 export default function BarGamesPage() {
   const [filter, setFilter] = useState<"all" | "available" | "unavailable">(
@@ -14,7 +16,7 @@ export default function BarGamesPage() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["barGames"],
     queryFn: getAllBarGames,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5, 
     refetchOnWindowFocus: false,
   });
 
@@ -29,41 +31,27 @@ export default function BarGamesPage() {
         );
      
   return (
-    <div className="max-w-7xl mx-auto p-4">
-      <div className="flex items-center justify-between mb-4">
+    <div className=" flex flex-col items-center justify-center p-4">
+      <div className="flex flex-col items-center justify-between mb-4">
         <h1 className="text-xl font-bold">Bar Games</h1>
-        <button className="px-6 py-3 text-sm bg-green-700 text-white rounded hover:bg-green-500" onClick={() => router.push('/createbargame')}>Add a bar game</button>
+        <button className="px-6 py-3 text-sm bg-green-700 text-white rounded hover:bg-green-500" onClick={() => router.push(Routes.CREATE_BAR_GAME)}>Add a bar game</button>
       </div>
-      <div className="space-y-3">
-        {filteredGames?.map((game: BarGame) => (
-          <div
+      <div className="space-y-4">
+        <div className="flex flex-col gap-3  items-center space-x-4 mb-4">
+          {filteredGames?.map((game: BarGame) =>(
+            <GameCard
             key={game.id}
-            className="flex items-center justify-between border rounded-lg p-4 shadow-sm hover:shadow-md transition"
-          >
-            <div className="flex gap-1">
-              <h1 className="font-bold">Name:</h1>
-              <p className="font-extralight">{game.name}</p>
-            </div>
-            <select className="border rounded-md ml-150 px-4 py-2 text-sm">
-              <option value="available">Available</option>
-              <option value="unavailable">Unavailable</option>
-            </select>
-            <div className="flex items-center space-x-4">
-              <span className="text-gray-700 font-medium">
-                ${game.pricePerHour}/hr
-              </span>
-              <div className="flex space-x-2">
-                <button className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600">
-                  Edit
-                </button>
-                <button className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600">
-                  Delete
-                </button>
-              </div>
-            </div>
+            game={game}
+            onEdit={(id) => router.push(`${Routes.EDIT_BAR_GAME}/${id}`)}
+            onDelete={(id) => {
+              // Handle delete logic here
+              console.log(`Delete game with id: ${id}`);
+            }}
+          />
+          ))}
           </div>
-        ))}
       </div>
-    </div>
+      </div>
   );
 }
+

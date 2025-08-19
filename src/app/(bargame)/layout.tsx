@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "react-hot-toast";
 
 // Create a new instance of QueryClient
 const queryClient = new QueryClient();
@@ -33,12 +34,10 @@ export default function BargamesLayout({
           </Link>
         </nav>
       </aside>
-
-      {/* Main Content */}
       <main className="flex-1 p-6 bg-gray-100">
-        {/* Provide the created query client to children */}
         <QueryClientProvider client={queryClient}>
           {children}
+                  <Toaster position="top-right" /> 
         </QueryClientProvider>
       </main>
     </div>
